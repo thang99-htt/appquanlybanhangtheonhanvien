@@ -2,8 +2,9 @@ import 'package:flutter/material.dart';
 
 import 'package:provider/provider.dart';
 
-import 'ui/orders/add_order_screen.dart';
-import 'ui/revenues/manager_revenues_screen.dart';
+import 'models/product.dart';
+import 'ui/home_screen.dart';
+import 'ui/notifications/notifications_manager.dart';
 import 'ui/screens.dart';
 
 Future<void> main() async {
@@ -13,7 +14,24 @@ Future<void> main() async {
 class MyApp extends StatelessWidget {
   const MyApp({Key? key}) : super(key: key);
 
-  // This widget is the root of your application.
+  @override
+  Widget build(BuildContext context) {
+    return const MaterialApp(
+      home: MyHomePage(),
+    );
+  }
+}
+
+class MyHomePage extends StatefulWidget {
+  const MyHomePage({
+    Key? key,
+  }) : super(key: key);
+
+  @override
+  State<MyHomePage> createState() => _MyHomePageState();
+}
+
+class _MyHomePageState extends State<MyHomePage> {
   @override
   Widget build(BuildContext context) {
     return MultiProvider(
@@ -30,6 +48,9 @@ class MyApp extends StatelessWidget {
           ChangeNotifierProvider(
             create: (ctx) => OrdersManager(),
           ),
+          ChangeNotifierProvider(
+            create: (ctx) => NotificationsManager(),
+          ),
         ],
         child: Consumer<AuthManager>(
           builder: (ctx, authManager, child) {
@@ -44,7 +65,7 @@ class MyApp extends StatelessWidget {
                 ),
               ),
               home: authManager.isAuth
-                  ? const ProductsOverviewScreen()
+                  ? const HomeScreen()
                   : FutureBuilder(
                       future: authManager.tryAutoLogin(),
                       builder: (ctx, snapshot) {
@@ -54,8 +75,10 @@ class MyApp extends StatelessWidget {
                             : const AuthScreen();
                       },
                     ),
-              // home: const ProductsOverviewScreen(),
+              // home: const HomeScreen(),
               routes: {
+                ProductsOverviewScreen.routeName: (ctx) =>
+                    const ProductsOverviewScreen(),
                 ManagerProductsScreen.routeName: (ctx) =>
                     const ManagerProductsScreen(),
                 ManagerUsersScreen.routeName: (ctx) =>
@@ -99,10 +122,24 @@ class MyApp extends StatelessWidget {
                   );
                 }
 
+                if (settings.name == UserAddOrderScreen.routeName) {
+                  final product = settings.arguments as Product;
+                  return MaterialPageRoute(
+                    builder: (ctx) {
+                      return UserAddOrderScreen(product: product);
+                    },
+                  );
+                }
+
                 return null;
               },
             );
           },
         ));
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
   }
 }

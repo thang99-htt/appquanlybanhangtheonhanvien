@@ -1,72 +1,84 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
 import '../../models/product.dart';
+import '../orders/user_add_order_screen.dart';
 import 'product_detail_screen.dart';
 
 class ProductGridTile extends StatelessWidget {
   const ProductGridTile(
     this.product, {
-    super.key,
-  });
+    Key? key,
+  }) : super(key: key);
 
   final Product product;
 
   @override
   Widget build(BuildContext context) {
-    return ClipRRect(
-      borderRadius: BorderRadius.circular(10),
-      child: GridTile(
-        footer: buildGridFooterBar(context),
-        child: GestureDetector(
-          onTap: () {
-            Navigator.of(context).push(
-              MaterialPageRoute(
-                builder: (ctx) => ProductDetailScreen(product),
+    return GestureDetector(
+      onTap: () {
+        Navigator.of(context).push(
+          MaterialPageRoute(
+            builder: (ctx) => ProductDetailScreen(product),
+          ),
+        );
+      },
+      child: Container(
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(6),
+          boxShadow: [
+            BoxShadow(
+              color: const Color.fromARGB(255, 211, 211, 211).withOpacity(0.3),
+              spreadRadius: 2,
+              blurRadius: 5,
+              offset: Offset(0, 1), // changes position of shadow
+            ),
+          ],
+        ),
+        child: Card(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(6),
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Expanded(
+                child: ClipRRect(
+                  borderRadius:
+                      const BorderRadius.vertical(top: Radius.circular(10)),
+                  child: Container(
+                    padding: const EdgeInsets.all(8), // Add padding here
+                    child: Image.network(
+                      product.image,
+                      fit: BoxFit.fill,
+                    ),
+                  ),
+                ),
               ),
-            );
-          },
-          child: Image.network(
-            product.image,
-            fit: BoxFit.cover,
+              Padding(
+                padding: const EdgeInsets.all(12),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      product.name,
+                      style: const TextStyle(fontSize: 16),
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                    Text(
+                      NumberFormat.currency(locale: 'vi_VN', symbol: '₫')
+                          .format(product.priceSale),
+                      style: const TextStyle(
+                          fontWeight: FontWeight.bold, fontSize: 18),
+                    ),
+                    
+                  ],
+                ),
+              ),
+            ],
           ),
         ),
-      ),
-    );
-  }
-
-  Widget buildGridFooterBar(BuildContext context) {
-    return GridTileBar(
-      backgroundColor: Colors.black87,
-      title: Text(
-        product.name,
-        textAlign: TextAlign.left,
-      ),
-      trailing: IconButton(
-        icon: const Icon(
-          Icons.shopping_cart,
-        ),
-        onPressed: () {
-          print('add item to cart');
-          // final cart = context.read<CartManager>();
-          // cart.addItem(product);
-          // ScaffoldMessenger.of(context)
-          //   ..hideCurrentSnackBar()
-          //   ..showSnackBar(
-          //     SnackBar(
-          //       content: const Text(
-          //         'Item added to cart',
-          //       ),
-          //       duration: const Duration(seconds: 2),
-          //       action: SnackBarAction(
-          //         label: 'UNDO',
-          //         onPressed: () {
-          //           cart.removeSingleItem(product.id!);
-          //         },
-          //       ),
-          //     ),
-          //   );
-        },
-        color: Theme.of(context).colorScheme.secondary,
       ),
     );
   }

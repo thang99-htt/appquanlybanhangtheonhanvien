@@ -12,3 +12,8 @@ export 'orders/orders_manager.dart';
 export 'products/edit_product_screen.dart';
 export 'users/edit_user_screen.dart';
 export 'users/users_manager.dart';
+
+
+export 'orders/add_order_screen.dart';
+export 'orders/user_add_order_screen.dart';
+export 'revenues/manager_revenues_screen.dart';

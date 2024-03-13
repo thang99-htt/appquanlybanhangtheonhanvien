@@ -1,14 +1,17 @@
 class AuthToken {
   final String _token;
-  final String _userId;
+  final int _userId;
+  final String _userRole;
   final DateTime _expiryDate;
 
   AuthToken({
     token,
     userId,
+    userRole,
     expiryDate,
   })  : _token = token,
         _userId = userId,
+        _userRole = userRole,
         _expiryDate = expiryDate;
 
   bool get isValid {
@@ -22,8 +25,12 @@ class AuthToken {
     return null;
   }
 
-  String get userId {
+  int get userId {
     return _userId;
+  }
+
+  String get userRole {
+    return _userRole;
   }
 
   DateTime get expiryDate {
@@ -34,6 +41,7 @@ class AuthToken {
     return {
       'token': _token,
       'userId': _userId,
+      'userRole': _userRole,
       'expiryDate': _expiryDate.toIso8601String(),
     };
   }
@@ -42,6 +50,7 @@ class AuthToken {
     return AuthToken(
       token: json['token'],
       userId: json['userId'],
+      userRole: json['userRole'],
       expiryDate: DateTime.parse(json['expiryDate']),
     );
   }

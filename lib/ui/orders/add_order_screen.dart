@@ -111,7 +111,7 @@ class _AddOrderScreenState extends State<AddOrderScreen> {
 
     try {
       final ordersManager = context.read<OrdersManager>();
-      await ordersManager.addOrder(_addedOrder);
+      await ordersManager.addOrder(context, _addedOrder);
     } catch (error) {
       await showErrorDialog(context, error.toString());
     }
@@ -267,9 +267,10 @@ class _AddOrderScreenState extends State<AddOrderScreen> {
               subtitle: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text('Giá bán: ${product.priceSale}'),
+                  Text(
+                      'Giá bán: ${NumberFormat.currency(locale: 'vi_VN', symbol: '₫').format(product.priceSale)}'),
                   TextFormField(
-                    decoration: InputDecoration(labelText: 'Số lượng'),
+                    decoration: const InputDecoration(labelText: 'Số lượng'),
                     keyboardType: TextInputType.number,
                     initialValue: '1',
                     onChanged: (value) {

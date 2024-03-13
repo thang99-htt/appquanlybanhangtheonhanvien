@@ -23,6 +23,8 @@ class Product {
       required this.quantity,
       required this.time});
 
+  get price => null;
+
   Product copyWith({
     int? id,
     String? name,

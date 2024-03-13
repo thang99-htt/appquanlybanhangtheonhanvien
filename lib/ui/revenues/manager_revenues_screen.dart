@@ -4,6 +4,8 @@ import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
+import '../auth/auth_manager.dart';
 
 import '../shared/app_drawer.dart';
 
@@ -20,12 +22,18 @@ class _ManagerRevenuesScreenState extends State<ManagerRevenuesScreen> {
   @override
   void initState() {
     super.initState();
-    _fetchRevenueData();
+    _fetchRevenueData(context);
   }
 
-  Future<void> _fetchRevenueData() async {
-    final response =
-        await http.get(Uri.parse('http://10.0.2.2:8000/api/revenues/1'));
+  Future<void> _fetchRevenueData(BuildContext context) async {
+    final userId =
+        Provider.of<AuthManager>(context, listen: false).authToken?.userId;
+    if (userId != null && userId != 5) {
+      return; // Bỏ qua nếu userId không hợp lệ
+    }
+
+    final response = await http
+        .get(Uri.parse('http://10.0.2.2:8000/api/revenues/${userId}'));
 
     if (response.statusCode == 200) {
       setState(() {
@@ -142,15 +150,16 @@ class _ManagerRevenuesScreenState extends State<ManagerRevenuesScreen> {
                 .format(staff['total_sales']);
           }
           return ListTile(
-            title: Text('Họ Tên: ${staff['name'] ?? 'N/A'}',
-                style: const TextStyle(fontSize: 18)),
+            title: Text('${staff['name'] ?? 'N/A'}',
+                style:
+                    const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
             subtitle: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text('Vai trò: ${staff['role'] ?? 'N/A'}',
-                    style: const TextStyle(fontSize: 14)),
+                    style: const TextStyle(fontSize: 15)),
                 Text('Người quản lý: ${staff['manager_name'] ?? 'N/A'}',
-                    style: const TextStyle(fontSize: 14)),
+                    style: const TextStyle(fontSize: 15)),
               ],
             ),
             trailing:

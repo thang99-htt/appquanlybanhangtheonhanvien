@@ -1,12 +1,12 @@
 import 'dart:convert';
-import 'dart:ffi';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
 import '../../models/order.dart';
 import 'dart:async';
 
 import '../../models/order_detail.dart';
+import '../auth/auth_manager.dart';
 
 class OrdersManager with ChangeNotifier {
   List<Order> _items = [];
@@ -40,9 +40,11 @@ class OrdersManager with ChangeNotifier {
               userName: data['user_name'],
               orderedAt: data['ordered_at'] != null
                   ? DateTime.parse(data['ordered_at'])
+                      .add(const Duration(hours: 7))
                   : null,
               receivedAt: data['received_at'] != null
                   ? DateTime.parse(data['received_at'])
+                      .add(const Duration(hours: 7))
                   : null,
               totalValue: data['total_value'],
               status: data['status'],
@@ -64,7 +66,8 @@ class OrdersManager with ChangeNotifier {
     }
   }
 
-  Future<void> addOrder(Order order) async {
+  Future<void> addOrder(BuildContext context, Order order) async {
+    // Pass BuildContext as a parameter
     const url = 'http://10.0.2.2:8000/api/orders';
     try {
       // Map each Product object to the desired JSON structure
@@ -77,13 +80,58 @@ class OrdersManager with ChangeNotifier {
         };
       }).toList();
 
+      final userId =
+          Provider.of<AuthManager>(context, listen: false).authToken?.userId ??
+              ''; // Lấy userId từ AuthManager
+
       final response = await http.post(
         Uri.parse(url),
         headers: <String, String>{
           'Content-Type': 'application/json; charset=UTF-8',
         },
         body: jsonEncode(<String, dynamic>{
-          'user_id': order.userId,
+          'user_id': userId,
+          'total_value': order.totalValue,
+          'name_customer': order.nameCustomer,
+          'phone_customer': order.phoneCustomer,
+          'address_customer': order.addressCustomer,
+          'details': productsJsonList, // Use the mapped JSON list here
+        }),
+      );
+
+      final responseData = json.decode(response.body);
+      throw Exception('responseData: $responseData');
+
+      fetchOrders();
+      notifyListeners();
+    } catch (error) {
+      throw Exception('Failed to create order: $error');
+    }
+  }
+
+  Future<void> addOrderUser(BuildContext context, Order order) async {
+    // Pass BuildContext as a parameter
+    const url = 'http://10.0.2.2:8000/api/orders';
+    try {
+      // Map each Product object to the desired JSON structure
+      List<Map<String, dynamic>> productsJsonList =
+          order.products.map((product) {
+        return {
+          'product_id': product.id,
+          'price': product.priceSale,
+          'quantity': product.quantity,
+        };
+      }).toList();
+
+      const userId = null; // Lấy userId từ AuthManager
+
+      final response = await http.post(
+        Uri.parse(url),
+        headers: <String, String>{
+          'Content-Type': 'application/json; charset=UTF-8',
+        },
+        body: jsonEncode(<String, dynamic>{
+          'user_id': userId,
           'total_value': order.totalValue,
           'name_customer': order.nameCustomer,
           'phone_customer': order.phoneCustomer,

@@ -37,11 +37,12 @@ class AuthManager with ChangeNotifier {
       final responseData = json.decode(response.body);
       if (responseData != null &&
           responseData['token'] != null &&
-          responseData['userId'] != null &&
+          responseData['role'] != null &&
           responseData['expiryDate'] != null) {
         final authToken = AuthToken(
           token: responseData['token'],
-          userId: responseData['userId'].toString(),
+          userId: responseData['userId'],
+          userRole: responseData['role'].toString(),
           expiryDate: DateTime.parse(responseData['expiryDate']),
         );
         _setAuthToken(authToken);
@@ -74,7 +75,7 @@ class AuthManager with ChangeNotifier {
 
   Future<void> signup(String email, String password) async {
     try {
-      final url = 'http://10.0.2.2:8000/api/users/signup';
+      const url = 'http://10.0.2.2:8000/api/users/signup';
       final response = await http.post(
         Uri.parse(url),
         body: json.encode({

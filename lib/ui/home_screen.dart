@@ -1,28 +1,28 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../notifications/notifications_manager.dart';
-import '../notifications/notifications_overview_screen.dart';
-import '../screens.dart';
-import 'products_grid.dart';
-import '../shared/app_drawer.dart';
 import 'package:socket_io_client/socket_io_client.dart' as IO;
 
-class ProductsOverviewScreen extends StatefulWidget {
-  static const routeName = '/products';
+import 'auth/auth_manager.dart';
+import 'notifications/notifications_manager.dart';
+import 'notifications/notifications_overview_screen.dart';
+import 'orders/manager_orders_screen.dart';
+import 'products/manager_products_screen.dart';
+import 'revenues/manager_revenues_screen.dart';
+import 'shared/app_drawer.dart';
+import 'users/manager_users_screen.dart';
 
-  const ProductsOverviewScreen({Key? key}) : super(key: key);
+class HomeScreen extends StatefulWidget {
+  const HomeScreen({Key? key}) : super(key: key);
 
   @override
-  State<ProductsOverviewScreen> createState() => _ProductsOverviewScreenState();
+  State<HomeScreen> createState() => _HomeScreenState();
 }
 
-class _ProductsOverviewScreenState extends State<ProductsOverviewScreen> {
-  late Future<void> _fetchProducts;
+class _HomeScreenState extends State<HomeScreen> {
   late IO.Socket socket;
 
   @override
   void initState() {
-    _fetchProducts = context.read<ProductsManager>().fetchProducts();
     socket = IO.io(
         'http://10.0.2.2:8000',
         IO.OptionBuilder()
@@ -32,7 +32,6 @@ class _ProductsOverviewScreenState extends State<ProductsOverviewScreen> {
     socket.connect();
 
     setUpSocketListener();
-
     super.initState();
   }
 
@@ -48,7 +47,7 @@ class _ProductsOverviewScreenState extends State<ProductsOverviewScreen> {
         Provider.of<AuthManager>(context, listen: false).authToken?.userRole ??
             '';
     if (userRole == 'Người quản trị' ||
-        userRole == 'Quản lý bán hàng' ||
+        userRole == 'bán hàng' ||
         userRole == 'Nhân viên bán hàng') {
       socket.on(
         'message-receive',
@@ -100,23 +99,102 @@ class _ProductsOverviewScreenState extends State<ProductsOverviewScreen> {
               fillColor: const Color.fromARGB(87, 196, 204, 211),
               hintStyle: const TextStyle(color: Colors.white),
             ),
-            onChanged: (value) {
-              // Thực hiện hành động khi thay đổi giá trị của thanh tìm kiếm
-            },
+            onChanged: (value) {},
           ),
         ),
       ),
       drawer: const AppDrawer(),
-      body: FutureBuilder(
-        future: _fetchProducts,
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.done) {
-            return ProductsGrid();
-          }
-          return const Center(
-            child: CircularProgressIndicator(),
-          );
-        },
+      body: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: [
+              Expanded(
+                child: GestureDetector(
+                  onTap: () {
+                    Navigator.of(context)
+                        .pushReplacementNamed(ManagerUsersScreen.routeName);
+                  },
+                  child: buildCard(
+                    title: 'Người dùng',
+                    icon: Icons.people,
+                  ),
+                ),
+              ),
+              Expanded(
+                child: GestureDetector(
+                  onTap: () {
+                    Navigator.of(context)
+                        .pushReplacementNamed(ManagerOrdersScreen.routeName);
+                  },
+                  child: buildCard(
+                    title: 'Đơn hàng',
+                    icon: Icons.shopping_cart,
+                  ),
+                ),
+              ),
+            ],
+          ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              Expanded(
+                child: GestureDetector(
+                  onTap: () {
+                    Navigator.of(context)
+                        .pushReplacementNamed(ManagerProductsScreen.routeName);
+                  },
+                  child: buildCard(
+                    title: 'Sản phẩm',
+                    icon: Icons.inventory,
+                  ),
+                ),
+              ),
+              Expanded(
+                child: GestureDetector(
+                  onTap: () {
+                    Navigator.of(context)
+                        .pushReplacementNamed(ManagerRevenuesScreen.routeName);
+                  },
+                  child: buildCard(
+                    title: 'Doanh thu',
+                    icon: Icons.attach_money,
+                  ),
+                ),
+              ),
+            ],
+          )
+        ],
+      ),
+    );
+  }
+
+  Widget buildCard({required String title, required IconData icon}) {
+    return SizedBox(
+      height: 150, // Điều chỉnh kích thước theo ý muốn của bạn
+      child: Card(
+        elevation: 5,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        child: Padding(
+          padding: const EdgeInsets.all(20),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(
+                icon,
+                size: 50,
+                color: Colors.blue,
+              ),
+              const SizedBox(height: 10),
+              Text(
+                title,
+                style:
+                    const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              ),
+            ],
+          ),
+        ),
       ),
     );
   }

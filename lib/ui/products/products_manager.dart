@@ -26,7 +26,9 @@ class ProductsManager with ChangeNotifier {
             priceSale: data['price_sale'],
             pricePurchase: data['price_purchase'],
             quantity: data['quantity'],
-            time: data['time'] != null ? DateTime.parse(data['time']) : null,
+            time: data['time'] != null
+                ? DateTime.parse(data['time']).add(const Duration(hours: 7))
+                : null,
           );
         }).toList();
         notifyListeners();
@@ -53,10 +55,9 @@ class ProductsManager with ChangeNotifier {
           'price_purchase': product.pricePurchase,
           'price_sale': product.priceSale,
           'quantity': product.quantity,
-          'stock': product.stock,
-          'time': product.time!.toIso8601String(),
         }),
       );
+
       fetchProducts();
       notifyListeners();
     } catch (error) {
@@ -79,10 +80,10 @@ class ProductsManager with ChangeNotifier {
           'price_purchase': product.pricePurchase,
           'price_sale': product.priceSale,
           'quantity': product.quantity,
-          'stock': product.stock,
-          'time': DateFormat('yyyy-MM-dd HH:mm:ss').format(product.time!),
         }),
       );
+      fetchProducts();
+      notifyListeners();
     } catch (error) {
       throw Exception('Failed to update user: $error');
     }

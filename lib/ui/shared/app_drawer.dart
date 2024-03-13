@@ -1,3 +1,4 @@
+import 'package:appqlbanhang/ui/products/products_overview_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -18,54 +19,27 @@ class AppDrawer extends StatelessWidget {
           AppBar(
             title:
                 Consumer<AuthManager>(builder: (context, authManager, child) {
-              final userId = authManager.authToken?.userId ??
-                  ''; // Lấy userId từ AuthManager
-              return Text('Xin Chào! $userId'); // Hiển thị userId trong AppBar
+              final userId =
+                  authManager.authToken?.userId; // Lấy userId từ AuthManager
+              return Text('Xin Chào $userId!'); // Hiển thị userId trong AppBar
             }),
             automaticallyImplyLeading: false,
           ),
           const Divider(),
           ListTile(
-            leading: const Icon(Icons.shop),
-            title: const Text('Shop'),
+            leading: const Icon(Icons.home),
+            title: const Text('Trang chủ'),
             onTap: () {
               Navigator.of(context).pushReplacementNamed('/');
             },
           ),
           const Divider(),
           ListTile(
-            leading: const Icon(Icons.person),
-            title: const Text('QL Người dùng'),
+            leading: const Icon(Icons.shop),
+            title: const Text('Mua sắm'),
             onTap: () {
               Navigator.of(context)
-                  .pushReplacementNamed(ManagerUsersScreen.routeName);
-            },
-          ),
-          const Divider(),
-          ListTile(
-            leading: const Icon(Icons.add_box),
-            title: const Text('QL Sản phẩm'),
-            onTap: () {
-              Navigator.of(context)
-                  .pushReplacementNamed(ManagerProductsScreen.routeName);
-            },
-          ),
-          const Divider(),
-          ListTile(
-            leading: const Icon(Icons.shop_2),
-            title: const Text('QL Đơn hàng'),
-            onTap: () {
-              Navigator.of(context)
-                  .pushReplacementNamed(ManagerOrdersScreen.routeName);
-            },
-          ),
-          const Divider(),
-          ListTile(
-            leading: const Icon(Icons.chat_rounded),
-            title: const Text('QL Doanh thu'),
-            onTap: () {
-              Navigator.of(context)
-                  .pushReplacementNamed(ManagerRevenuesScreen.routeName);
+                  .pushReplacementNamed(ProductsOverviewScreen.routeName);
             },
           ),
           const Divider(),

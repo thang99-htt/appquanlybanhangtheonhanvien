@@ -98,7 +98,7 @@ class _EditProductScreenState extends State<EditProductScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Edit Product'),
+        title: const Text('Sản phẩm'),
         actions: <Widget>[
           IconButton(
             icon: const Icon(Icons.save),
@@ -117,11 +117,12 @@ class _EditProductScreenState extends State<EditProductScreen> {
                 child: ListView(
                   children: <Widget>[
                     buildNameField(),
+                    const SizedBox(height: 8),
+                    buildPriceDateField(),
                     buildPricePurchaseField(),
                     buildPriceSaleField(),
                     buildQuantityField(),
                     buildDescriptionField(),
-                    buildMomentField(context),
                     buildProductPreview(),
                   ],
                 ),
@@ -135,56 +136,6 @@ class _EditProductScreenState extends State<EditProductScreen> {
         (value.endsWith('.png') ||
             value.endsWith('.jpg') ||
             value.endsWith('.jpeg'));
-  }
-
-  DateTime? _selectedDate;
-  TimeOfDay? _selectedTime;
-
-  Future<void> _selectDate(BuildContext context) async {
-    final DateTime? pickedDate = await showDatePicker(
-      context: context,
-      initialDate: _selectedDate ?? DateTime.now(),
-      firstDate: DateTime(2000),
-      lastDate: DateTime(2101),
-    );
-    if (pickedDate != null) {
-      setState(() {
-        _selectedDate = pickedDate;
-      });
-    }
-  }
-
-  Future<void> _selectTime(BuildContext context) async {
-    final TimeOfDay? pickedTime = await showTimePicker(
-      context: context,
-      initialTime: _selectedTime ?? TimeOfDay.now(),
-    );
-    if (pickedTime != null) {
-      setState(() {
-        _selectedTime = pickedTime;
-      });
-    }
-  }
-
-  TextFormField buildMomentField(BuildContext context) {
-    return TextFormField(
-      readOnly: true,
-      controller: TextEditingController(
-        text: _editedProduct.id != null
-            ? DateFormat('yyyy-MM-dd HH:mm:ss').format(_editedProduct.time!)
-            : DateFormat('yyyy-MM-dd HH:mm:ss').format(DateTime.now()),
-      ),
-      onTap: () {
-        _selectDate(context);
-        _selectTime(context);
-      },
-      decoration: const InputDecoration(
-        labelText: 'Ngày giờ',
-      ),
-      onSaved: (value) {
-        // Xử lý giá trị ngày giờ sau khi lưu
-      },
-    );
   }
 
   TextFormField buildNameField() {
@@ -352,6 +303,15 @@ class _EditProductScreenState extends State<EditProductScreen> {
       onSaved: (value) {
         _editedProduct = _editedProduct.copyWith(image: value);
       },
+    );
+  }
+
+  Widget buildPriceDateField() {
+    // This widget is for price purchase date field
+    return Text(
+      _editedProduct.time != null
+          ? 'Giá cập nhật ngày: ${DateFormat('dd-MM-yyyy HH:mm:ss').format(_editedProduct.time!)}'
+          : '',
     );
   }
 }

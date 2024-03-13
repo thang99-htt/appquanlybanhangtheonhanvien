@@ -1,9 +1,15 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
+import '../../models/product.dart';
 import '../../models/user.dart';
 import 'users_manager.dart';
 import '../shared/dialog_utils.dart';
 import 'package:email_validator/email_validator.dart';
+import 'package:http/http.dart' as http;
+import 'dart:async';
 
 class EditUserScreen extends StatefulWidget {
   static const routeName = '/edit-user';
@@ -20,6 +26,8 @@ class _EditUserScreenState extends State<EditUserScreen> {
   final _editForm = GlobalKey<FormState>();
   late User _editedUser;
   var _isLoading = false;
+  late List<User> _allUsers = [];
+  int _selectedUserId = 0;
 
   @override
   void initState() {
@@ -34,6 +42,34 @@ class _EditUserScreenState extends State<EditUserScreen> {
           password: '',
         );
     super.initState();
+    _fetchAllUsers();
+  }
+
+  void _fetchAllUsers() async {
+    const url = 'http://10.0.2.2:8000/api/users';
+    try {
+      final response = await http.get(Uri.parse(url));
+      if (response.statusCode == 200) {
+        final List<dynamic> responseData = json.decode(response.body);
+        _allUsers = responseData.map((data) {
+          return User(
+            id: data['id'],
+            name: data['name'],
+            email: '',
+            password: '',
+            role: '',
+          );
+        }).toList();
+        _allUsers.insert(0,
+            User(id: null, name: 'Unknown', email: '', password: '', role: ''));
+
+        setState(() {});
+      } else {
+        throw Exception('Failed to load products');
+      }
+    } catch (error) {
+      throw Exception('Failed to load products: $error');
+    }
   }
 
   @override
@@ -47,6 +83,8 @@ class _EditUserScreenState extends State<EditUserScreen> {
       return;
     }
     _editForm.currentState!.save();
+
+    _editedUser = _editedUser.copyWith(managerId: _selectedUserId);
 
     setState(() {
       _isLoading = true;
@@ -105,6 +143,9 @@ class _EditUserScreenState extends State<EditUserScreen> {
                     buildNameField(),
                     buildRoleField(),
                     buildPresenterField(),
+                    const SizedBox(height: 16),
+                    if (_editedUser.managerId == null)
+                      Text('Người quản lý hiện tại: ${_editedUser.manager}'),
                     buildManagerField(),
                     buildEmailField(),
                     if (_editedUser.id == null) buildPasswordField(),
@@ -117,33 +158,18 @@ class _EditUserScreenState extends State<EditUserScreen> {
 
   Widget buildManagerField() {
     return DropdownButtonFormField<int>(
-      value: _editedUser.managerId ?? 1,
+      value: _editedUser.managerId,
       decoration: const InputDecoration(labelText: 'Người quản lý'),
-      items: const [
-        DropdownMenuItem<int>(
-          value: 1,
-          child: Text('1'),
-        ),
-        DropdownMenuItem<int>(
-          value: 2,
-          child: Text('2'),
-        ),
-        DropdownMenuItem<int>(
-          value: 3,
-          child: Text('3'),
-        ),
-        DropdownMenuItem<int>(
-          value: 4,
-          child: Text('4'),
-        ),
-        DropdownMenuItem<int>(
-          value: 5,
-          child: Text('5'),
-        ),
-      ],
+      items: _allUsers.map((User user) {
+        return DropdownMenuItem<int>(
+          value: user.id ?? -1,
+          child: Text('${user.id} - ${user.name}'),
+        );
+      }).toList(),
       onChanged: (value) {
         setState(() {
-          _editedUser = _editedUser.copyWith(managerId: value);
+          _selectedUserId = value!;
+          _editedUser = _editedUser.copyWith(managerId: _selectedUserId);
         });
       },
       validator: (value) {
