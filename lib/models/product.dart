@@ -1,5 +1,5 @@
-import 'package:flutter/material.dart';
-import 'package:flutter/foundation.dart';
+import 'purchase_info.dart';
+import 'sale_info.dart';
 
 class Product {
   final int? id;
@@ -7,10 +7,13 @@ class Product {
   final String description;
   final String image;
   final int? stock;
-  final int priceSale;
-  final int pricePurchase;
-  late int quantity;
-  final DateTime? time;
+  final DateTime? timeSale;
+  final int? priceSale;
+  final List<PurchasesInfo>? purchasesInfo;
+  final List<PurchasesInfo>? purchaseInfo;
+  final List<SalesInfo>? salesInfo;
+  final List<SalesInfo>? saleInfo;
+  late int? quantity;
 
   Product(
       {this.id,
@@ -18,10 +21,13 @@ class Product {
       required this.description,
       required this.image,
       this.stock,
-      required this.priceSale,
-      required this.pricePurchase,
-      required this.quantity,
-      required this.time});
+      this.timeSale,
+      this.priceSale,
+      this.purchasesInfo,
+      this.purchaseInfo,
+      this.salesInfo,
+      this.saleInfo,
+      this.quantity});
 
   get price => null;
 
@@ -31,10 +37,13 @@ class Product {
     String? description,
     String? image,
     int? stock,
+    DateTime? timeSale,
     int? priceSale,
-    int? pricePurchase,
+    List<PurchasesInfo>? purchasesInfo,
+    List<PurchasesInfo>? purchaseInfo,
+    List<SalesInfo>? salesInfo,
+    List<SalesInfo>? saleInfo,
     int? quantity,
-    DateTime? time,
   }) {
     return Product(
       id: id ?? this.id,
@@ -42,15 +51,18 @@ class Product {
       description: description ?? this.description,
       image: image ?? this.image,
       stock: stock ?? this.stock,
+      timeSale: timeSale ?? this.timeSale,
       priceSale: priceSale ?? this.priceSale,
-      pricePurchase: pricePurchase ?? this.pricePurchase,
+      purchasesInfo: purchasesInfo ?? this.purchasesInfo,
+      purchaseInfo: purchaseInfo ?? this.purchaseInfo,
+      salesInfo: salesInfo ?? this.salesInfo,
+      saleInfo: saleInfo ?? this.saleInfo,
       quantity: quantity ?? this.quantity,
-      time: time ?? this.time,
     );
   }
 
   @override
   String toString() {
-    return 'Product(id: $id, name: $name, image: $image)';
+    return 'Product(purchasesInfo: $purchasesInfo)';
   }
 }

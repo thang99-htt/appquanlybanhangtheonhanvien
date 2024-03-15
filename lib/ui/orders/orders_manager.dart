@@ -40,11 +40,9 @@ class OrdersManager with ChangeNotifier {
               userName: data['user_name'],
               orderedAt: data['ordered_at'] != null
                   ? DateTime.parse(data['ordered_at'])
-                      .add(const Duration(hours: 7))
                   : null,
               receivedAt: data['received_at'] != null
                   ? DateTime.parse(data['received_at'])
-                      .add(const Duration(hours: 7))
                   : null,
               totalValue: data['total_value'],
               status: data['status'],
@@ -81,8 +79,7 @@ class OrdersManager with ChangeNotifier {
       }).toList();
 
       final userId =
-          Provider.of<AuthManager>(context, listen: false).authToken?.userId ??
-              ''; // Lấy userId từ AuthManager
+          Provider.of<AuthManager>(context, listen: false).authToken?.userId;
 
       final response = await http.post(
         Uri.parse(url),
@@ -98,9 +95,6 @@ class OrdersManager with ChangeNotifier {
           'details': productsJsonList, // Use the mapped JSON list here
         }),
       );
-
-      final responseData = json.decode(response.body);
-      throw Exception('responseData: $responseData');
 
       fetchOrders();
       notifyListeners();
@@ -119,7 +113,7 @@ class OrdersManager with ChangeNotifier {
         return {
           'product_id': product.id,
           'price': product.priceSale,
-          'quantity': product.quantity,
+          'quantity': 1,
         };
       }).toList();
 
@@ -137,6 +131,31 @@ class OrdersManager with ChangeNotifier {
           'phone_customer': order.phoneCustomer,
           'address_customer': order.addressCustomer,
           'details': productsJsonList, // Use the mapped JSON list here
+        }),
+      );
+
+      fetchOrders();
+      notifyListeners();
+    } catch (error) {
+      throw Exception('Failed to create order: $error');
+    }
+  }
+
+  Future<void> updateStatusOrder(BuildContext context, Order order) async {
+    final url = 'http://10.0.2.2:8000/api/orders/update-status/${order.id}';
+    try {
+      final userId =
+          Provider.of<AuthManager>(context, listen: false).authToken?.userId;
+
+      await http.put(
+        Uri.parse(url),
+        headers: <String, String>{
+          'Content-Type': 'application/json; charset=UTF-8',
+        },
+        body: jsonEncode(<String, dynamic>{
+          'id': order.id,
+          'user_id': userId,
+          'status': order.status,
         }),
       );
 

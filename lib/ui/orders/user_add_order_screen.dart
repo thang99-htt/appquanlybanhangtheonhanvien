@@ -40,7 +40,7 @@ class _UserAddOrderScreenState extends State<UserAddOrderScreen> {
     _addedOrder = Order(
         id: 0,
         userId: 0,
-        totalValue: widget.product.priceSale,
+        totalValue: widget.product.priceSale ?? 0,
         nameCustomer: '',
         phoneCustomer: '',
         addressCustomer: '',
@@ -162,7 +162,7 @@ class _UserAddOrderScreenState extends State<UserAddOrderScreen> {
                                 Colors.blue), // Đổi màu ở đây
                           ),
                           child: const Text(
-                            'MUA HÀNG',
+                            'ĐẶT HÀNG',
                             style: TextStyle(color: Colors.white, fontSize: 18),
                           ),
                         ),

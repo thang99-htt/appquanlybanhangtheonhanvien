@@ -21,6 +21,7 @@ class ManagerProductListTile extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
+                const SizedBox(height: 8),
                 Text(
                   product.name,
                   style: const TextStyle(
@@ -28,7 +29,7 @@ class ManagerProductListTile extends StatelessWidget {
                   ),
                 ),
                 Text(
-                  'Giá: ${NumberFormat.currency(locale: 'vi_VN', symbol: '₫').format(product.priceSale)}',
+                  'Giá bán: ${product.priceSale != null ? NumberFormat.currency(locale: 'vi_VN', symbol: '₫').format(product.priceSale) : 'Chưa có'}',
                   style: const TextStyle(
                     color: Colors.black,
                   ),
@@ -38,8 +39,10 @@ class ManagerProductListTile extends StatelessWidget {
           ),
         ],
       ),
+      minLeadingWidth: 60,
       leading: CircleAvatar(
         backgroundImage: NetworkImage(product.image),
+        radius: 30,
       ),
       trailing: SizedBox(
         width: 100,
@@ -77,7 +80,7 @@ class ManagerProductListTile extends StatelessWidget {
             ),
           );
       },
-      color: Theme.of(context).errorColor,
+      color: Theme.of(context).colorScheme.error,
     );
   }
 

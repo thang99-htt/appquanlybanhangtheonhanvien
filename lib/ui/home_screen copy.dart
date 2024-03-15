@@ -5,7 +5,6 @@ import 'package:socket_io_client/socket_io_client.dart' as IO;
 
 import 'notifications/notifications_manager.dart';
 import 'notifications/notifications_overview_screen.dart';
-import 'shared/app_drawer.dart';
 import 'shared/app_navigationbar.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -163,8 +162,7 @@ class _HomeScreenState extends State<HomeScreen> {
           )
         ],
       ),
-      // bottomNavigationBar: const AppNavigationBar(),
-      drawer: const AppDrawer(),
+      bottomNavigationBar: const AppNavigationBar(),
     );
   }
 

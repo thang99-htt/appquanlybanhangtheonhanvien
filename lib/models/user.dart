@@ -41,5 +41,8 @@ class User {
     );
   }
 
- 
+  @override
+  String toString() {
+    return 'User(managerId: $managerId)';
+  }
 }

@@ -16,27 +16,40 @@ class ManagerUsersScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(
-          title: const Text('QL Người dùng'),
-          actions: <Widget>[
-            buildAddButton(context),
-          ],
-        ),
-        drawer: const AppDrawer(),
-        body: FutureBuilder(
-          future: _refreshUsers(context),
-          builder: (ctx, snapshot) {
-            if (snapshot.connectionState == ConnectionState.waiting) {
-              return const Center(
-                child: CircularProgressIndicator(),
-              );
-            }
-            return RefreshIndicator(
-              onRefresh: () => _refreshUsers(context),
-              child: buildManagerUserListView(),
+      appBar: AppBar(
+        title: const Text('QL Người dùng'),
+      ),
+      drawer: const AppDrawer(),
+      body: FutureBuilder(
+        future: _refreshUsers(context),
+        builder: (ctx, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Center(
+              child: CircularProgressIndicator(),
             );
-          },
-        ));
+          }
+          return RefreshIndicator(
+            onRefresh: () => _refreshUsers(context),
+            child: buildManagerUserListView(),
+          );
+        },
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          Navigator.of(context).pushNamed(
+            EditUserScreen.routeName,
+          );
+        },
+        backgroundColor: Colors.blue, 
+        child: const Icon(Icons.add),
+      ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.endDocked,
+      bottomNavigationBar: const BottomAppBar(
+        color: Colors.transparent,
+        elevation: 0,
+        child: SizedBox(height: 40), 
+      ),
+    );
   }
 
   Widget buildManagerUserListView() {
@@ -54,17 +67,6 @@ class ManagerUsersScreen extends StatelessWidget {
           ),
         );
       },
-    );
-  }
-
-  Widget buildAddButton(BuildContext context) {
-    return IconButton(
-      onPressed: () {
-        Navigator.of(context).pushNamed(
-          EditUserScreen.routeName,
-        );
-      },
-      icon: const Icon(Icons.add),
     );
   }
 }

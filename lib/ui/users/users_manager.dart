@@ -74,7 +74,7 @@ class UsersManager with ChangeNotifier {
           'role': user.role,
           'presenter': user.presenter,
           'manager': user.manager,
-          'manager_id': user.managerId,
+          'manager_id': user.managerId == -1 ? null : user.managerId,
         }),
       );
       fetchUsers();

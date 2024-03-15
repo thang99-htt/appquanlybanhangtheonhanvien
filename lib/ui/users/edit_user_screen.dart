@@ -27,7 +27,7 @@ class _EditUserScreenState extends State<EditUserScreen> {
   late User _editedUser;
   var _isLoading = false;
   late List<User> _allUsers = [];
-  int _selectedUserId = 0;
+  int? _selectedUserId;
 
   @override
   void initState() {
@@ -40,6 +40,7 @@ class _EditUserScreenState extends State<EditUserScreen> {
           presenter: '',
           manager: '',
           password: '',
+          managerId: null, 
         );
     super.initState();
     _fetchAllUsers();
@@ -60,8 +61,16 @@ class _EditUserScreenState extends State<EditUserScreen> {
             role: '',
           );
         }).toList();
-        _allUsers.insert(0,
-            User(id: null, name: 'Unknown', email: '', password: '', role: ''));
+        _allUsers.insert(
+          0,
+          User(
+            id: null,
+            name: 'Unknown',
+            email: '',
+            password: '',
+            role: '',
+          ),
+        );
 
         setState(() {});
       } else {
@@ -144,8 +153,8 @@ class _EditUserScreenState extends State<EditUserScreen> {
                     buildRoleField(),
                     buildPresenterField(),
                     const SizedBox(height: 16),
-                    if (_editedUser.managerId == null)
-                      Text('Người quản lý hiện tại: ${_editedUser.manager}'),
+                    Text(
+                        'Người quản lý hiện tại: ${_editedUser.managerId == null ? _editedUser.manager : 'NULL'}'),
                     buildManagerField(),
                     buildEmailField(),
                     if (_editedUser.id == null) buildPasswordField(),
@@ -168,7 +177,7 @@ class _EditUserScreenState extends State<EditUserScreen> {
       }).toList(),
       onChanged: (value) {
         setState(() {
-          _selectedUserId = value!;
+          _selectedUserId = value;
           _editedUser = _editedUser.copyWith(managerId: _selectedUserId);
         });
       },

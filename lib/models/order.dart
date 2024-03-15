@@ -11,7 +11,7 @@ class Order {
   final String nameCustomer;
   final String phoneCustomer;
   final String? addressCustomer;
-  final String? status;
+  String? status;
   final List<OrderDetail> details;
   final List<Product> products;
 
@@ -60,8 +60,12 @@ class Order {
     );
   }
 
+  void updateStatus(String newStatus) {
+    status = newStatus;
+  }
+
   @override
   String toString() {
-    return 'Order(id: $id, products: $products)';
+    return 'Order(id: $id, status: $status, userId: $userId)';
   }
 }

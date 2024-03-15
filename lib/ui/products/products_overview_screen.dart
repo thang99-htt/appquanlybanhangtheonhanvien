@@ -100,13 +100,12 @@ class _ProductsOverviewScreenState extends State<ProductsOverviewScreen> {
               fillColor: const Color.fromARGB(87, 196, 204, 211),
               hintStyle: const TextStyle(color: Colors.white),
             ),
-            onChanged: (value) {
-              // Thực hiện hành động khi thay đổi giá trị của thanh tìm kiếm
-            },
+            onChanged: (value) {},
           ),
         ),
       ),
       drawer: const AppDrawer(),
+
       body: FutureBuilder(
         future: _fetchProducts,
         builder: (context, snapshot) {
@@ -129,12 +128,8 @@ class _ProductsOverviewScreenState extends State<ProductsOverviewScreen> {
             .length;
         return GestureDetector(
           onTap: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => const NotificationsOverviewScreen(),
-              ),
-            );
+            Navigator.of(context)
+                .pushReplacementNamed(NotificationsOverviewScreen.routeName);
           },
           child: Stack(
             children: [

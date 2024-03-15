@@ -1,5 +1,3 @@
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
@@ -9,6 +7,7 @@ import 'orders_manager.dart';
 import '../shared/dialog_utils.dart';
 import 'package:http/http.dart' as http;
 import 'dart:async';
+import 'dart:convert';
 
 class AddOrderScreen extends StatefulWidget {
   static const routeName = '/add-order';
@@ -29,6 +28,7 @@ class _AddOrderScreenState extends State<AddOrderScreen> {
   var _isLoading = false;
   List<Product> _selectedProducts = [];
   late List<Product> _allProducts = [];
+
   @override
   void initState() {
     _imageUrlFocusNode.addListener(() {
@@ -51,6 +51,7 @@ class _AddOrderScreenState extends State<AddOrderScreen> {
             details: [],
             status: 'Chờ xử lý',
             products: []);
+
     super.initState();
     _fetchAllProducts();
   }
@@ -69,9 +70,9 @@ class _AddOrderScreenState extends State<AddOrderScreen> {
             image: data['image'],
             stock: data['stock'],
             priceSale: data['price_sale'],
-            pricePurchase: data['price_purchase'],
             quantity: 1,
-            time: data['time'] != null ? DateTime.parse(data['time']) : null,
+            timeSale:
+                data['time'] != null ? DateTime.parse(data['time']) : null,
           );
         }).toList();
         setState(() {});
@@ -97,12 +98,13 @@ class _AddOrderScreenState extends State<AddOrderScreen> {
 
     int totalValue = 0;
     for (var product in _selectedProducts) {
-      totalValue += product.priceSale * product.quantity;
+      if (product.priceSale != null && product.quantity != null) {
+        totalValue += (product.priceSale! * product.quantity!);
+      }
     }
 
-    // Cập nhật tổng giá trị cho đơn hàng
+    // Update the total value for the order
     _addedOrder = _addedOrder.copyWith(totalValue: totalValue);
-
     _addedOrder = _addedOrder.copyWith(products: _selectedProducts);
 
     setState(() {
@@ -155,7 +157,7 @@ class _AddOrderScreenState extends State<AddOrderScreen> {
                 key: _addForm,
                 child: ListView(
                   children: <Widget>[
-                    buildNameCutomerField(),
+                    buildNameCustomerField(),
                     buildPhoneCustomerField(),
                     const SizedBox(height: 20),
                     buildTotalValueField(),
@@ -168,14 +170,7 @@ class _AddOrderScreenState extends State<AddOrderScreen> {
     );
   }
 
-  bool _isValidImageUrl(String value) {
-    return (value.startsWith('http') || value.startsWith('https')) &&
-        (value.endsWith('.png') ||
-            value.endsWith('.jpg') ||
-            value.endsWith('.jpeg'));
-  }
-
-  TextFormField buildNameCutomerField() {
+  TextFormField buildNameCustomerField() {
     return TextFormField(
       initialValue: _addedOrder.nameCustomer,
       decoration: const InputDecoration(labelText: 'Tên khách hàng'),
@@ -212,10 +207,7 @@ class _AddOrderScreenState extends State<AddOrderScreen> {
   }
 
   Widget buildTotalValueField() {
-    int totalValue = 0;
-    for (var product in _selectedProducts) {
-      totalValue += product.priceSale * product.quantity;
-    }
+    int totalValue = _calculateTotalValue();
 
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -236,6 +228,16 @@ class _AddOrderScreenState extends State<AddOrderScreen> {
         ),
       ],
     );
+  }
+
+  int _calculateTotalValue() {
+    int totalValue = 0;
+    for (var product in _selectedProducts) {
+      if (product.priceSale != null && product.quantity != null) {
+        totalValue += (product.priceSale! * product.quantity!);
+      }
+    }
+    return totalValue;
   }
 
   Widget buildProductSelectionList() {
@@ -272,10 +274,11 @@ class _AddOrderScreenState extends State<AddOrderScreen> {
                   TextFormField(
                     decoration: const InputDecoration(labelText: 'Số lượng'),
                     keyboardType: TextInputType.number,
-                    initialValue: '1',
+                    initialValue: product.quantity.toString(),
                     onChanged: (value) {
-                      // Chuyển đổi giá trị từ String sang int trước khi gán cho quantity
-                      product.quantity = int.parse(value);
+                      setState(() {
+                        product.quantity = int.parse(value);
+                      });
                     },
                   ),
                 ],
@@ -297,5 +300,12 @@ class _AddOrderScreenState extends State<AddOrderScreen> {
         ),
       ],
     );
+  }
+
+  bool _isValidImageUrl(String value) {
+    return (value.startsWith('http') || value.startsWith('https')) &&
+        (value.endsWith('.png') ||
+            value.endsWith('.jpg') ||
+            value.endsWith('.jpeg'));
   }
 }

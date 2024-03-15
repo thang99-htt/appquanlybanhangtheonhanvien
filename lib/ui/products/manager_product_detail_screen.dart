@@ -25,7 +25,7 @@ class ManagerProductDetailScreen extends StatelessWidget {
             width: double.infinity,
             child: Image.network(
               product.image,
-              fit: BoxFit.cover,
+              fit: BoxFit.fill,
             ),
           ),
           Container(
@@ -38,9 +38,9 @@ class ManagerProductDetailScreen extends StatelessWidget {
                 Text(
                   product.name,
                   style: const TextStyle(
-                    color: Colors.black,
-                    fontSize: 20,
-                  ),
+                      color: Colors.black,
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold),
                 ),
                 const SizedBox(height: 10),
                 Text.rich(
@@ -51,12 +51,14 @@ class ManagerProductDetailScreen extends StatelessWidget {
                         style: TextStyle(
                           color: Colors.black,
                           fontWeight: FontWeight.bold,
+                          fontSize: 16,
                         ),
                       ),
                       TextSpan(
                         text: '${product.id}',
                         style: const TextStyle(
                           color: Colors.black,
+                          fontSize: 16,
                         ),
                       ),
                     ],
@@ -71,12 +73,14 @@ class ManagerProductDetailScreen extends StatelessWidget {
                         style: TextStyle(
                           color: Colors.black,
                           fontWeight: FontWeight.bold,
+                          fontSize: 16,
                         ),
                       ),
                       TextSpan(
                         text: '${product.stock}',
                         style: const TextStyle(
                           color: Colors.black,
+                          fontSize: 16,
                         ),
                       ),
                     ],
@@ -84,26 +88,24 @@ class ManagerProductDetailScreen extends StatelessWidget {
                 ),
                 const SizedBox(height: 10),
                 Text(
-                  'Giá nhập: ${NumberFormat.currency(locale: 'vi_VN', symbol: '₫').format(product.pricePurchase)}',
+                  'Giá bán: (${product.priceSale != null ? NumberFormat.currency(locale: 'vi_VN', symbol: '₫').format(product.priceSale) : 'Chưa có'})',
                   style: const TextStyle(
-                    color: Colors.black,
-                  ),
+                      color: Color.fromARGB(255, 209, 14, 0),
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold),
                 ),
-                const SizedBox(height: 10),
-                Text(
-                  'Giá bán: ${NumberFormat.currency(locale: 'vi_VN', symbol: '₫').format(product.priceSale)}',
-                  style: const TextStyle(
-                    color: Colors.black,
-                  ),
+                const SizedBox(height: 20),
+                const Text(
+                  'Mô tả:',
+                  style: TextStyle(fontSize: 16),
                 ),
                 const SizedBox(
                   height: 10,
                 ),
-                Text(
-                  product.description,
-                  textAlign: TextAlign.left,
-                  softWrap: true,
-                ),
+                Text(product.description,
+                    textAlign: TextAlign.left,
+                    softWrap: true,
+                    style: const TextStyle(fontSize: 16)),
               ],
             ),
           ),
