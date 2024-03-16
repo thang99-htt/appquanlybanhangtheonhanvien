@@ -138,8 +138,12 @@ class _AuthCardState extends State<AuthCard> {
         textStyle: TextStyle(
           color: Theme.of(context).primaryTextTheme.titleLarge?.color,
         ),
+        backgroundColor: Colors.blue,
       ),
-      child: Text(_authMode == AuthMode.login ? 'ĐĂNG NHẬP' : 'ĐĂNG KÝ'),
+      child: Text(
+        _authMode == AuthMode.login ? 'ĐĂNG NHẬP' : 'ĐĂNG KÝ',
+        style: const TextStyle(color: Colors.white),
+      ),
     );
   }
 

@@ -76,57 +76,6 @@ class ManagerOrderListTile extends StatelessWidget {
         child: ListTile(
           contentPadding:
               const EdgeInsets.symmetric(vertical: 12.0, horizontal: 10.0),
-          title: Row(
-            children: <Widget>[
-              Flexible(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: <Widget>[
-                    Text(
-                      '#${order.id}',
-                    ),
-                    const SizedBox(height: 8),
-                    Text(
-                      NumberFormat.currency(locale: 'vi_VN', symbol: '₫')
-                          .format(order.totalValue),
-                      style: const TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 18,
-                      ),
-                      textAlign: TextAlign.right,
-                    ),
-                    const SizedBox(height: 8),
-                    Text(
-                      order.nameCustomer,
-                    ),
-                  ],
-                ),
-              ),
-            ],
-          ),
-          trailing: Stack(
-            alignment: Alignment.centerRight,
-            children: <Widget>[
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.end,
-                children: [
-                  Text(
-                    '${order.status}',
-                    style: TextStyle(color: topLeftBorderColor),
-                  ),
-                  const SizedBox(
-                      height:
-                          20), // Khoảng cách giữa văn bản "status" và "time"
-                  Text(
-                    timeAgo(order.orderedAt!),
-                    style: const TextStyle(
-                      color: Color.fromARGB(255, 83, 83, 83),
-                    ),
-                  ),
-                ],
-              ),
-            ],
-          ),
           onTap: () {
             Navigator.of(context).push(
               MaterialPageRoute(
@@ -134,6 +83,55 @@ class ManagerOrderListTile extends StatelessWidget {
               ),
             );
           },
+          title: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: <Widget>[
+              Expanded(
+                child: Flexible(
+                  flex: 1,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: <Widget>[
+                      Text(
+                        '#${order.id}',
+                      ),
+                      const SizedBox(height: 4),
+                      Text(
+                        NumberFormat.currency(locale: 'vi_VN', symbol: '₫')
+                            .format(order.totalValue),
+                        style: const TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 18,
+                        ),
+                        textAlign: TextAlign.right,
+                      ),
+                      const SizedBox(height: 4),
+                      Text(
+                        order.nameCustomer,
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: [
+                  Text(
+                    '${order.status}',
+                    style: TextStyle(color: topLeftBorderColor, fontSize: 14),
+                  ),
+                  const SizedBox(
+                      height:
+                          20), // Khoảng cách giữa văn bản "status" và "time"
+                  Text(
+                    timeAgo(order.orderedAt!),
+                    style:
+                        const TextStyle(color: Color.fromARGB(255, 83, 83, 83)),
+                  ),
+                ],
+              ),
+            ],
+          ),
         ),
       ),
     );

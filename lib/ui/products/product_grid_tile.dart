@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
 import '../../models/product.dart';
-import '../orders/user_add_order_screen.dart';
 import 'product_detail_screen.dart';
 
 class ProductGridTile extends StatelessWidget {
@@ -31,7 +30,7 @@ class ProductGridTile extends StatelessWidget {
               color: const Color.fromARGB(255, 211, 211, 211).withOpacity(0.3),
               spreadRadius: 2,
               blurRadius: 5,
-              offset: Offset(0, 1), // changes position of shadow
+              offset: const Offset(0, 1), // changes position of shadow
             ),
           ],
         ),

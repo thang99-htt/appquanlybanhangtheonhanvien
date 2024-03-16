@@ -131,7 +131,9 @@ class _EditProductScreenState extends State<EditProductScreen>
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Sản phẩm'),
+        backgroundColor: Colors.blue,
+        iconTheme: const IconThemeData(color: Colors.white),
+        title: const Text('Sản phẩm', style: TextStyle(color: Colors.white)),
         actions: <Widget>[
           IconButton(
             icon: const Icon(Icons.save),
@@ -145,6 +147,7 @@ class _EditProductScreenState extends State<EditProductScreen>
             Tab(text: 'Giá nhập'),
             Tab(text: 'Giá bán'),
           ],
+          labelColor: Colors.white,
         ),
       ),
       body: _isLoading

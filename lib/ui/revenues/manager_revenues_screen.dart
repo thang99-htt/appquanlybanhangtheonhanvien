@@ -48,7 +48,12 @@ class _ManagerRevenuesScreenState extends State<ManagerRevenuesScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('QL Doanh Thu'),
+        backgroundColor: Colors.blue,
+        iconTheme: const IconThemeData(color: Colors.white),
+        title: const Text(
+          'QL Doanh Thu',
+          style: TextStyle(color: Colors.white),
+        ),
       ),
       drawer: const AppDrawer(),
       body: DefaultTabController(
@@ -63,7 +68,7 @@ class _ManagerRevenuesScreenState extends State<ManagerRevenuesScreen> {
           bottomNavigationBar: Container(
             color: Colors.blue, // Màu nền cho TabBar
             child: const Padding(
-              padding: EdgeInsets.only(bottom: 4.0),
+              padding: EdgeInsets.only(bottom: 0),
               child: TabBar(
                 tabs: [
                   Tab(text: 'Thông tin & DTCN'),
@@ -121,7 +126,9 @@ class _ManagerRevenuesScreenState extends State<ManagerRevenuesScreen> {
         children: [
           Padding(
             padding: const EdgeInsets.all(8.0),
-            child: _buildPieChart(),
+            child: _revenueData['staffs'] != null
+                ? _buildPieChart()
+                : const SizedBox(), // Sử dụng biểu thức điều kiện để kiểm tra xem _revenueData['staffs'] có dữ liệu và personal_revenue có là true hay không
           ),
           Expanded(
             child: ListView.builder(
@@ -206,33 +213,45 @@ class _ManagerRevenuesScreenState extends State<ManagerRevenuesScreen> {
         totalRevenue += (staff['total_sales'] ?? 0).toDouble();
       }
 
+      // Kiểm tra nếu tổng doanh số là 0
+      if (totalRevenue == 0) {
+        return const Center(
+          child: Text('Không có dữ liệu doanh thu'),
+        );
+      }
+
+      // Biến để kiểm tra xem có phần trăm nào bằng 0 hay không
+      bool hasNonZeroPercentage = false;
+
       // Lặp qua các nhân viên và thêm dữ liệu vào biểu đồ
       for (int i = 0; i < staffs.length && i < 10; i++) {
         final staff = staffs[i];
-        final String satffName = staff['name'];
+        final String staffName = staff['name'];
         final double totalSales = (staff['total_sales'] ?? 0).toDouble();
 
-        // Kiểm tra nếu tổng doanh số là 0
-        double percentage = 0.0;
-        if (totalRevenue != 0) {
-          // Tính phần trăm doanh số bán của mỗi nhân viên so với tổng doanh số
-          percentage = totalSales / totalRevenue;
+        // Tính phần trăm doanh số bán của mỗi nhân viên so với tổng doanh số
+        double percentage = totalSales / totalRevenue;
 
-          // Kiểm tra nếu phần trăm là 0
-          if (percentage == 0) {
-            continue; // Bỏ qua nếu phần trăm là 0
-          }
+        // Kiểm tra xem phần trăm có khác 0 không
+        if (percentage != 0) {
+          hasNonZeroPercentage =
+              true; // Đặt biến hasNonZeroPercentage thành true
+          pieChartData.add(
+            PieChartSectionData(
+              color: colors[i],
+              value: percentage * 100, // Chuyển đổi sang phần trăm
+              title: ' $staffName',
+              radius: 75,
+              titleStyle: const TextStyle(fontSize: 14, color: Colors.white),
+            ),
+          );
         }
+      }
 
-        pieChartData.add(
-          PieChartSectionData(
-            color: colors[i],
-            value: percentage * 100, // Chuyển đổi sang phần trăm
-            title: ' $satffName',
-            // title: '${(percentage * 100).toStringAsFixed(1)}% - $satffName',
-            radius: 75,
-            titleStyle: const TextStyle(fontSize: 14, color: Colors.white),
-          ),
+      // Kiểm tra xem có phần trăm nào khác 0 không
+      if (!hasNonZeroPercentage) {
+        return const Center(
+          child: Text('Tất cả các nhân viên đều không có doanh số'),
         );
       }
 

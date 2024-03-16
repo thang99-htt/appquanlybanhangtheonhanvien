@@ -139,7 +139,10 @@ class _AddOrderScreenState extends State<AddOrderScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Thêm đơn hàng'),
+        backgroundColor: Colors.blue,
+        iconTheme: const IconThemeData(color: Colors.white),
+        title:
+            const Text('Thêm đơn hàng', style: TextStyle(color: Colors.white)),
         actions: <Widget>[
           IconButton(
             icon: const Icon(Icons.save),

@@ -1,9 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
-import '../../models/product.dart';
 import '../../models/user.dart';
 import 'users_manager.dart';
 import '../shared/dialog_utils.dart';
@@ -40,7 +38,7 @@ class _EditUserScreenState extends State<EditUserScreen> {
           presenter: '',
           manager: '',
           password: '',
-          managerId: null, 
+          managerId: null,
         );
     super.initState();
     _fetchAllUsers();
@@ -131,7 +129,9 @@ class _EditUserScreenState extends State<EditUserScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Người dùng'),
+        backgroundColor: Colors.blue,
+        iconTheme: const IconThemeData(color: Colors.white),
+        title: const Text('Người dùng', style: TextStyle(color: Colors.white)),
         actions: <Widget>[
           IconButton(
             icon: const Icon(Icons.save),

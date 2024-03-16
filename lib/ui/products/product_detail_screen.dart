@@ -17,7 +17,10 @@ class ProductDetailScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(product.name),
+        backgroundColor: Colors.blue,
+        iconTheme: const IconThemeData(color: Colors.white),
+        title: const Text('Chi tiết sản phẩm',
+            style: TextStyle(color: Colors.white)),
       ),
       body: Stack(
         children: [
@@ -79,6 +82,7 @@ class ProductDetailScreen extends StatelessWidget {
                         textAlign: TextAlign.left,
                         softWrap: true,
                       ),
+                      const SizedBox(height: 100),
                     ],
                   ),
                 ),

@@ -6,7 +6,6 @@ import 'package:socket_io_client/socket_io_client.dart' as IO;
 import 'notifications/notifications_manager.dart';
 import 'notifications/notifications_overview_screen.dart';
 import 'shared/app_drawer.dart';
-import 'shared/app_navigationbar.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({Key? key}) : super(key: key);
@@ -64,6 +63,8 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        backgroundColor: Colors.blue,
+        iconTheme: const IconThemeData(color: Colors.white),
         actions: <Widget>[
           FutureBuilder(
             future: _refreshNotifications(context),
@@ -169,10 +170,12 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Widget buildCard({required String title, required IconData icon}) {
-    return SizedBox(
-      height: 150, // Điều chỉnh kích thước theo ý muốn của bạn
-      child: Card(
+    return Container(
+      height: 150,
+      margin: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 4.0),
+      child: Material(
         elevation: 5,
+        color: Colors.white,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
         child: Padding(
           padding: const EdgeInsets.all(20),

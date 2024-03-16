@@ -18,11 +18,15 @@ class ManagerOrdersScreen extends StatefulWidget {
 class _ManagerOrdersScreenState extends State<ManagerOrdersScreen>
     with SingleTickerProviderStateMixin {
   late TabController _tabController;
+  late int _totalOrders;
+  late int _pendingOrders;
 
   @override
   void initState() {
     super.initState();
     _tabController = TabController(length: 3, vsync: this);
+    _totalOrders = 0;
+    _pendingOrders = 0;
   }
 
   @override
@@ -35,15 +39,29 @@ class _ManagerOrdersScreenState extends State<ManagerOrdersScreen>
     await context.read<OrdersManager>().fetchOrders();
   }
 
+  void _calculateOrderStats(BuildContext context) {
+    final ordersManager = context.read<OrdersManager>();
+    _totalOrders = ordersManager.items.length;
+    _pendingOrders = ordersManager.items
+        .where((order) => order.status == 'Chờ xác nhận')
+        .length;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('QL Đơn hàng'),
+        backgroundColor: Colors.blue,
+        iconTheme: const IconThemeData(color: Colors.white),
+        title: const Text(
+          'QL Đơn hàng',
+          style: TextStyle(color: Colors.white),
+        ),
       ),
       drawer: const AppDrawer(),
       body: Column(
         children: [
+          buildOrderStats(context),
           Expanded(
             child: Column(
               children: [
@@ -63,21 +81,29 @@ class _ManagerOrdersScreenState extends State<ManagerOrdersScreen>
           ),
         ],
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          Navigator.of(context).pushNamed(
-            AddOrderScreen.routeName,
-          );
-        },
-        backgroundColor: Colors.blue, // Màu nền xanh
-        child: const Icon(Icons.add),
+      floatingActionButton: Container(
+        margin: const EdgeInsets.only(bottom: 16.0),
+        width: 60,
+        height: 60,
+        child: FloatingActionButton(
+          onPressed: () {
+            Navigator.of(context).pushNamed(
+              AddOrderScreen.routeName,
+            );
+          },
+          backgroundColor: Colors.blue,
+          elevation: 0,
+          shape: RoundedRectangleBorder(
+            borderRadius:
+                BorderRadius.circular(30), // Thiết lập bán kính của nút
+          ),
+          child: const Icon(
+            Icons.add,
+            color: Colors.white, // Đặt màu trắng cho icon
+          ),
+        ),
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.endDocked,
-      bottomNavigationBar: const BottomAppBar(
-        color: Colors.transparent,
-        elevation: 0,
-        child: SizedBox(height: 40), // Đặt chiều cao của bottomAppBar
-      ),
     );
   }
 
@@ -104,7 +130,6 @@ class _ManagerOrdersScreenState extends State<ManagerOrdersScreen>
                     ManagerOrderListTile(
                       filteredOrders[i],
                     ),
-                    const Divider(),
                   ],
                 );
               },
@@ -121,12 +146,64 @@ class _ManagerOrdersScreenState extends State<ManagerOrdersScreen>
       child: TabBar(
         controller: _tabController,
         tabs: const [
-          Tab(text: 'Tất cả'),
-          Tab(text: 'Chờ xác nhận'),
-          Tab(text: 'Hoàn thành'),
+          Tab(
+            child: Text(
+              'Tất cả',
+              style: TextStyle(
+                  fontSize: 16), // Đặt kích thước font cho văn bản ở đây
+            ),
+          ),
+          Tab(
+            child: Text(
+              'Chờ xác nhận',
+              style: TextStyle(
+                  fontSize: 16), // Đặt kích thước font cho văn bản ở đây
+            ),
+          ),
+          Tab(
+            child: Text(
+              'Hoàn thành',
+              style: TextStyle(
+                  fontSize: 16), // Đặt kích thước font cho văn bản ở đây
+            ),
+          ),
         ],
         labelColor: Colors.blue,
         unselectedLabelColor: Colors.blue,
+      ),
+    );
+  }
+
+  Widget buildOrderStats(BuildContext context) {
+    _calculateOrderStats(context);
+    return Padding(
+      padding: const EdgeInsets.all(16.0),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceAround,
+        children: [
+          Column(
+            children: [
+              Text('$_totalOrders',
+                  style: const TextStyle(
+                      fontWeight: FontWeight.bold, fontSize: 16)),
+              const Text(
+                'Tổng số đơn',
+                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+              ),
+            ],
+          ),
+          Column(
+            children: [
+              Text('$_pendingOrders',
+                  style: const TextStyle(
+                      fontWeight: FontWeight.bold, fontSize: 16)),
+              const Text(
+                'Chờ duyệt',
+                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+              ),
+            ],
+          ),
+        ],
       ),
     );
   }

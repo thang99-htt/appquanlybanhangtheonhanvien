@@ -17,7 +17,9 @@ class NotificationsOverviewScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          title: const Text('Thông báo'),
+          backgroundColor: Colors.blue,
+          iconTheme: const IconThemeData(color: Colors.white),
+          title: const Text('Thông báo', style: TextStyle(color: Colors.white)),
         ),
         drawer: const AppDrawer(),
         body: FutureBuilder(
@@ -46,7 +48,6 @@ class NotificationsOverviewScreen extends StatelessWidget {
               NotificationListTile(
                 notificationsManager.items[i],
               ),
-              const Divider(),
             ],
           ),
         );

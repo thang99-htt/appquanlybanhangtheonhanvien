@@ -6,12 +6,12 @@ import 'product_grid_tile.dart';
 import 'products_manager.dart';
 
 class ProductsGrid extends StatelessWidget {
+  final List<Product> products; // Thêm trường products
+
+  const ProductsGrid({Key? key, required this.products}) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
-    final productsManager = ProductsManager();
-    final products = context.select<ProductsManager, List<Product>>(
-        (productsManager) => productsManager.items);
-
     return GridView.builder(
       padding: const EdgeInsets.all(8),
       itemCount: products.length,

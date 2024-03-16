@@ -10,7 +10,7 @@ class UsersManager with ChangeNotifier {
   List<User> get items => [..._items];
 
   Future<void> fetchUsers() async {
-    final url = 'http://10.0.2.2:8000/api/users';
+    const url = 'http://10.0.2.2:8000/api/users';
     try {
       final response = await http.get(Uri.parse(url));
       if (response.statusCode == 200) {
@@ -36,9 +36,9 @@ class UsersManager with ChangeNotifier {
   }
 
   Future<void> addUser(User user) async {
-    final url = 'http://10.0.2.2:8000/api/users';
+    const url = 'http://10.0.2.2:8000/api/users';
     try {
-      final response = await http.post(
+      await http.post(
         Uri.parse(url),
         headers: <String, String>{
           'Content-Type': 'application/json; charset=UTF-8',
@@ -62,7 +62,7 @@ class UsersManager with ChangeNotifier {
   Future<void> updateUser(User user) async {
     final url = 'http://10.0.2.2:8000/api/users/${user.id}';
     try {
-      final response = await http.put(
+       await http.put(
         Uri.parse(url),
         headers: <String, String>{
           'Content-Type': 'application/json; charset=UTF-8',

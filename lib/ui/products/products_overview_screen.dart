@@ -1,11 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../notifications/notifications_manager.dart';
-import '../notifications/notifications_overview_screen.dart';
+import '../../models/product.dart';
 import '../screens.dart';
 import 'products_grid.dart';
 import '../shared/app_drawer.dart';
-import 'package:socket_io_client/socket_io_client.dart' as IO;
 
 class ProductsOverviewScreen extends StatefulWidget {
   static const routeName = '/products';
@@ -18,72 +16,48 @@ class ProductsOverviewScreen extends StatefulWidget {
 
 class _ProductsOverviewScreenState extends State<ProductsOverviewScreen> {
   late Future<void> _fetchProducts;
-  late IO.Socket socket;
+  late List<Product> _filteredProducts;
 
   @override
   void initState() {
     _fetchProducts = context.read<ProductsManager>().fetchProducts();
-    socket = IO.io(
-        'http://10.0.2.2:8000',
-        IO.OptionBuilder()
-            .setTransports(['websocket'])
-            .disableAutoConnect()
-            .build());
-    socket.connect();
-
-    setUpSocketListener();
-
+    _filteredProducts = []; // Khởi tạo _filteredProducts trống ban đầu
+    _initializeFilteredProducts(); // Gọi hàm để cập nhật danh sách sản phẩm
     super.initState();
+  }
+
+  void _initializeFilteredProducts() {
+    setState(() {
+      _filteredProducts =
+          context.read<ProductsManager>().items; // Cập nhật danh sách sản phẩm
+    });
   }
 
   @override
   void dispose() {
-    socket.dispose();
     super.dispose();
   }
 
-  void setUpSocketListener() {
-    final notificationsManager = context.read<NotificationsManager>();
-    final userRole =
-        Provider.of<AuthManager>(context, listen: false).authToken?.userRole ??
-            '';
-    if (userRole == 'Người quản trị' ||
-        userRole == 'Quản lý bán hàng' ||
-        userRole == 'Nhân viên bán hàng') {
-      socket.on(
-        'message-receive',
-        (data) async {
-          print(data);
-          await notificationsManager.addNotification(context, data);
-        },
-      );
-    }
-  }
-
-  Future<void> _refreshNotifications(BuildContext context) async {
-    await context.read<NotificationsManager>().fetchNotifications(context);
+  void _searchProducts(String query) {
+    setState(() {
+      if (query.isEmpty) {
+        _filteredProducts = context.read<ProductsManager>().items;
+      } else {
+        _filteredProducts =
+            context.read<ProductsManager>().items.where((product) {
+          return product.name.toLowerCase().contains(query.toLowerCase());
+        }).toList();
+      }
+    });
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        actions: <Widget>[
-          FutureBuilder(
-            future: _refreshNotifications(context),
-            builder: (ctx, snapshot) {
-              if (snapshot.connectionState == ConnectionState.waiting) {
-                return const Center(
-                  child: CircularProgressIndicator(),
-                );
-              }
-              return RefreshIndicator(
-                onRefresh: () => _refreshNotifications(context),
-                child: buildNotificationIcon(),
-              );
-            },
-          ),
-        ],
+        backgroundColor: Colors.blue,
+        actions: <Widget>[],
+        iconTheme: const IconThemeData(color: Colors.white),
         title: SizedBox(
           height: 36,
           width: 500,
@@ -100,76 +74,23 @@ class _ProductsOverviewScreenState extends State<ProductsOverviewScreen> {
               fillColor: const Color.fromARGB(87, 196, 204, 211),
               hintStyle: const TextStyle(color: Colors.white),
             ),
-            onChanged: (value) {},
+            onChanged: _searchProducts,
+            style: const TextStyle(color: Colors.white),
           ),
         ),
       ),
       drawer: const AppDrawer(),
-
       body: FutureBuilder(
         future: _fetchProducts,
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.done) {
-            return ProductsGrid();
+            return ProductsGrid(products: _filteredProducts);
           }
           return const Center(
             child: CircularProgressIndicator(),
           );
         },
       ),
-    );
-  }
-
-  Widget buildNotificationIcon() {
-    return Consumer<NotificationsManager>(
-      builder: (context, notificationsManager, child) {
-        int unreadNotificationsCount = notificationsManager.items
-            .where((notification) => notification.readed == 0)
-            .length;
-        return GestureDetector(
-          onTap: () {
-            Navigator.of(context)
-                .pushReplacementNamed(NotificationsOverviewScreen.routeName);
-          },
-          child: Stack(
-            children: [
-              IconButton(
-                icon: const Icon(
-                  Icons.notifications,
-                  color: Colors.white, // Change the icon color to white
-                ),
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => const NotificationsOverviewScreen(),
-                    ),
-                  );
-                },
-              ),
-              if (unreadNotificationsCount > 0)
-                Positioned(
-                  top: 2.0,
-                  right: 4.0,
-                  child: Container(
-                    padding: const EdgeInsets.all(4.0),
-                    decoration: BoxDecoration(
-                      color: Colors.red, // You can change the color as needed
-                      borderRadius: BorderRadius.circular(8.0),
-                    ),
-                    child: Text(
-                      unreadNotificationsCount.toString(),
-                      style: const TextStyle(
-                        color: Colors.white,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ),
-                ),
-            ],
-          ),
-        );
-      },
     );
   }
 }

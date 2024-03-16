@@ -5,6 +5,7 @@ import 'package:provider/provider.dart';
 import 'models/product.dart';
 import 'ui/home_screen.dart';
 import 'ui/notifications/notifications_manager.dart';
+import 'ui/products/salesinfo_manager.dart';
 import 'ui/screens.dart';
 
 Future<void> main() async {
@@ -51,18 +52,17 @@ class _MyHomePageState extends State<MyHomePage> {
           ChangeNotifierProvider(
             create: (ctx) => NotificationsManager(),
           ),
+          ChangeNotifierProvider(
+            create: (ctx) => SalesInfoManager(),
+          ),
         ],
         child: Consumer<AuthManager>(
           builder: (ctx, authManager, child) {
             return MaterialApp(
               title: 'Katec',
               theme: ThemeData(
+                scaffoldBackgroundColor: Colors.white,
                 fontFamily: 'Lato',
-                colorScheme: ColorScheme.fromSwatch(
-                  primarySwatch: Colors.blue,
-                ).copyWith(
-                  secondary: Colors.deepOrange,
-                ),
               ),
               home: authManager.isAuth
                   ? const HomeScreen()
